@@ -1,42 +1,32 @@
-
-name: Build SR Cambodia TV APK
+name: Build SR CAMBODIA TV APK
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
-
-permissions:
-  contents: read
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
 
     steps:
-      - name: Download Source Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Java 17
+      - name: Setup JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+      - name: Grant Permission
+        run: chmod +x gradlew
 
       - name: Build Android APK
-        run: |
-          chmod +x gradlew
-          ./gradlew --no-daemon assembleDebug
+        run: ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: SR-CAMBODIA-TV-APK
           path: app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
-          retention-days: 30
